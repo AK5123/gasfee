@@ -155,7 +155,7 @@ export default function Home() {
             <span onClick={() => handleOptionChange(TimeOptions.DEFAULT)} className={option === TimeOptions.DEFAULT ? "active" : ""}>25 blocks</span>
             <span onClick={() => handleOptionChange(TimeOptions.FIFTEEN_MIN)} className={option === TimeOptions.FIFTEEN_MIN ? "active" : ""}>15Min</span>
             <span onClick={() => handleOptionChange(TimeOptions.ONE_HOUR)} className={option === TimeOptions.ONE_HOUR ? "active" : ""}>1Hr</span>
-            <span onClick={() => handleOptionChange(TimeOptions.ONE_HOUR)} className={option === TimeOptions.ONE_DAY ? "active" : ""}>1D</span>
+            <span onClick={() => handleOptionChange(TimeOptions.ONE_DAY)} className={option === TimeOptions.ONE_DAY ? "active" : ""}>1D</span>
           </div>
         </header>
         {loading ? <Loader /> : renderChart()}
