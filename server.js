@@ -156,8 +156,14 @@ provider.on("block",async (id)=>{
           timestamp: `${latestBlock.timestamp}`
         });
         await redis.expire(`${latestBlock.number}`,EXPIRATION);
+
+        // Emitting the new block to the connected clients
+        io.emit('newBlock', JSON.stringify({
+          id: latestBlock.number.toString(), 
+          baseGas: `${ethers.utils.formatUnits(latestBlock.baseFeePerGas.toString(),"gwei")}`,
+          timestamp: `${latestBlock.timestamp}`
+        }));
         
-        eventEmitter.emit("newBlock",latestBlock);        
       }
     })    
 })
@@ -170,15 +176,6 @@ io.on("connection",(socket)=>{
     console.log("Client Disconnected");
     socket.disconnect(0);
   });
-
-  //Emit new Block information to client
-  eventEmitter.on("newBlock",(latestBlock)=>{
-    socket.emit("newBlock",JSON.stringify({
-      id:latestBlock.number.toString(), 
-      baseGas: `${ethers.utils.formatUnits(latestBlock.baseFeePerGas.toString(),"gwei")}`,
-      timestamp: `${latestBlock.timestamp}`
-    }));
-  })
   
 });
 
