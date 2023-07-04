@@ -1,0 +1,76 @@
+.component{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    min-width: 400px;
+    background-color: rgba(0,0,0,1);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+
+header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+
+span{
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+p{
+    margin: 0;
+}
+
+.gasFee{
+    font-size: 3rem;
+    color:orangered;
+}
+
+.baseFeeText{
+    color: rgba(255, 255, 255, 0.601);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.errorctn{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+
+.slider{
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid white;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 15px;
+    margin-right: 5px;
+    box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 0px 8px;
+    cursor: pointer;
+}
+
+.slider span{
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.slider span.active{
+    background-color: rgba(132, 132, 132, 0.292);
+    padding: 3px 5px;
+    border-radius: 20px;
+}
