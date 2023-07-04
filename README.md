@@ -5,6 +5,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 First, 
 Ensure Redis is running. Change the URL, PORT for Redis
 
+
 Second, run the development server:
 
 ```bash
@@ -33,7 +34,6 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 | Routes | Description |
 | ----------- | ----------- |
 | /api/health | returns "OK" |
-| /api/latest | returns Latest Block |
 | /api/blocks-default | returns the latest 25 blocks |
 | api/blocks-timestamp/:oldtimestamp | returns all the blocks from latest block uptill the block having oldtimestamp|
 

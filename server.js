@@ -3,13 +3,14 @@ const http = require("http");
 const { ethers } = require("ethers");
 const { createClient } = require("redis");
 const { Server } = require("socket.io");
+require('dotenv').config();
 
 const EventEmitter = require('events');
 const eventEmitter = new EventEmitter();
 
 //Redis Details
-const REDIS_URL = "localhost";
-const REDIS_PORT = 8001;
+const REDIS_URL = process.env.REDIS_URL ;
+const REDIS_PORT = process.env.REDIS_PORT;
 
 // Backend Details
 const BACKEND_HOSTNAME = "localhost";
@@ -79,7 +80,7 @@ redis.on('error', (err) => {
   process.exit(1);
 });
 
-// Fill redis cache with recent 100 blocks
+// Fill redis cache with recent 500 blocks - bootstrap data
 const fillCache = async () => {
   console.time("Key1");
   console.log("Cache Filling Started");  
@@ -91,7 +92,7 @@ const fillCache = async () => {
 
     await redis.set("latestBlock",latestBlock.number);
 
-    for(let i = 0;i<100;i++){
+    for(let i = 0;i<500;i++){
       blockPromises.push(provider.getBlock(latestBlockNumber-i))
     }
     const blocks = await Promise.all(blockPromises)
@@ -103,7 +104,7 @@ const fillCache = async () => {
       }); 
       await redis.expire(`${block.number}`,EXPIRATION);
     }
-    console.log("Filled cache with 100 Data");
+    console.log("Filled cache with 500 Data");
   }
   catch(err){
     console.log("Error while filling Cache",err);
@@ -181,17 +182,23 @@ io.on("connection",(socket)=>{
   
 });
 
+// Get all blocks within the given timestamp
 const getBlocksOnTimestamp =  async (oldTimeStamp) => {
   let latestBlockNumber = await redis.get("latestBlock");
   let latestBlock = await redis.hGetAll(`${latestBlockNumber}`);
 
   const blocks = [];
+
   let i = latestBlockNumber;
+  let block = latestBlock;
   let timestamp =latestBlock.timestamp;
-  
+
   while(timestamp >= oldTimeStamp){  
+   
+    blocks.push(block); 
     i = i-1;
-    let block = await redis.hGetAll(`${i}`);  
+    block = await redis.hGetAll(`${i}`);  
+
     // If block is not present in redis then fetch it from chain and store it in redis
     if(block.timestamp === undefined || block.baseGas === undefined){
       let newBlock = await provider.getBlock(i);
@@ -206,15 +213,10 @@ const getBlocksOnTimestamp =  async (oldTimeStamp) => {
         baseGas: `${ethers.utils.formatUnits(newBlock.baseFeePerGas.toString(),"gwei")}`,
         timestamp: `${newBlock.timestamp}`
       }  
-      blocks.push(block); 
-      timestamp = block.timestamp;
-    }  
-    // If block is present in redis then push it to array
-    else{
+    } else {
       block.id = i;
-      blocks.push(block);
-      timestamp = block.timestamp;
     }
+    timestamp = block.timestamp;
   }
 
   const updatedBlocks = blocks.reverse()
@@ -224,11 +226,6 @@ const getBlocksOnTimestamp =  async (oldTimeStamp) => {
 // API routes
 app.get("/api/health",(req,res)=>{
   return res.status(200).send("OK");
-})
-
-app.get("/api/latest",async (req,res)=>{
-  const value = await redis.get("latestBlock");
-  return res.status(200).json({block:value});
 })
 
 // Get last 25 blocks
@@ -265,7 +262,7 @@ app.get("/api/blocks-default",async(req,res)=>{
 
 })
 
-// Get blocks on timestamp - 1 hour, 1 day
+// Get blocks on timestamp - 15min, 1 hour, 1 day
 app.get("/api/blocks-timestamp/:oldtimestamp",async(req,res)=>{
   let oldTimeStamp = req.params.oldtimestamp;
   const arr = await getBlocksOnTimestamp(oldTimeStamp);

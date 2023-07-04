@@ -40,16 +40,6 @@ p{
     font-weight: 600;
 }
 
-.errorctn{
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    justify-content: center;
-    align-items: center;
-    
-}
-
-
 .slider{
     display: flex;
     flex-direction: row;

@@ -11,12 +11,13 @@ import {
   Legend,
   ChartOptions,
 } from 'chart.js';
-import { Line, Chart } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 
 import { BlockBaseGasProps } from '../page';
 
-interface ScatterChartProps  {
-    points : BlockBaseGasProps[]
+interface ScatterChartProps {
+  points: BlockBaseGasProps[],
+  latestBaseGas: string | undefined
 }
 
 ChartJS.register(
@@ -30,15 +31,15 @@ ChartJS.register(
   Legend
 );
 
-export default function LineChart({points}:ScatterChartProps) {
+export default function LineChart({ points, latestBaseGas }: ScatterChartProps) {
   // Extract x and y values from the data array
   const chartData = {
     labels: points.map((point) => `Block No : ${point.id}`),
-    datasets: [      
-      {        
+    datasets: [
+      {
         fill: true,
         label: "gwei",
-        data: points.map((point) => {if(point.baseGas) return Number(point.baseGas.substring(0,point.baseGas.indexOf('.'))) }),
+        data: points.map((point) => { if (point.baseGas) return Number(point.baseGas.substring(0, point.baseGas.indexOf('.'))) }),
         timeStamp: points.map((point) => point.timestamp),
         borderColor: 'rgb(101, 71, 192,0.8)',
         backgroundColor: 'rgb(101, 71, 192,0.4)',
@@ -54,7 +55,7 @@ export default function LineChart({points}:ScatterChartProps) {
           display: false
         }
       },
-      y:{
+      y: {
         beginAtZero: true,
       }
     },
@@ -65,9 +66,9 @@ export default function LineChart({points}:ScatterChartProps) {
       tooltip: {
         intersect: false,
         callbacks: {
-          footer: (tooltipItems:any) =>  {
+          footer: (tooltipItems: any) => {
             let timestamp = tooltipItems[0].dataset.timeStamp[tooltipItems[0].parsed.x];
-            return `Timestamp : ${new Date(timestamp*1000).toLocaleString()}`
+            return `Timestamp : ${new Date(timestamp * 1000).toLocaleString()}`
           }
         }
       }
@@ -77,9 +78,15 @@ export default function LineChart({points}:ScatterChartProps) {
   };
 
   return (
-    <div style={{width: "100%", marginTop: "30px"}}>
-      <Line data={chartData}  options={chartOptions} />
-    </div>
+    <>
+      <div>
+        <p><span className="gasFee">{latestBaseGas}</span> <span>gwei</span></p>
+        <p className="baseFeeText">Current Base Fee</p>
+      </div>
+      <div style={{ width: "100%", marginTop: "30px" }}>
+        <Line data={chartData} options={chartOptions} />
+      </div>
+    </>
   );
 }
 

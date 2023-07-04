@@ -15,7 +15,6 @@
     "@types/node": "20.3.3",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
-    "axios": "^1.4.0",
     "chart.js": "^4.3.0",
     "cors": "^2.8.5",
     "ethers": "^5.7.2",
